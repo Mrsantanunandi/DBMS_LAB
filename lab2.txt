@@ -1,0 +1,142 @@
+create table EMP_45(	
+EMPNO number(4), 
+ENAME varchar(50),
+JOB char(25),
+MGR number(4),
+HIREDATE date,
+SAL number(4),
+COMM number(4),
+DEPTNO number(2)
+PRIMARY KEY(EMPNO));
+
+create table client_master46(
+	Client_no Varchar2(6) PRIMARY KEY,
+	Name Varchar2(20) NOT NULL,
+	City Varchar2(15) ,
+	Pincode Number(8),
+	State Varchar2(15),
+	Bal_due Number(10,2),
+	check(Client_no like 'C%')
+);
+
+create table product_master46(
+	Product_no Varchar2(6) PRIMARY KEY,
+	Description Varchar2(15) NOT NULL,
+	Profit_percent Number(4,2) NOT NULL,
+	Unit_measure Varchar2(10) NOT NULL,
+	Qty_on_hand Number(8) NOT NULL,
+	Reorder_lvl Number(8) NOT NULL,
+	Sell_price Number(8,2) NOT NULL check(Sell_price > 0),
+	Cost_price Number(8,2) NOT NULL check(Cost_price > 0),
+	check(Product_no like 'P%')
+);
+
+create table salesman_master46(
+	Salesman_no Varchar2(6) PRIMARY KEY,
+	Salesman_name Varchar2(20) NOT NULL,
+	Address1 Varchar2(10) NOT NULL,
+	Address2 Varchar2(10),
+	City Varchar2(20) ,
+	Pincode Number(7),
+	State Varchar2(20),
+	Sal_amt Number(8,2) NOT NULL check(Sal_amt > 0),
+	Tgt_to_get Number(6,2) NOT NULL check(Tgt_to_get > 0),
+	Ytd_sales Number(6,2) NOT NULL,
+	Remarks Varchar2(20),
+	check(Salesman_no like 'S%')
+);
+
+create table sales_order46(
+	Order_no Varchar2(6) Primary key,
+	Order_date date,
+	Client_no Varchar2(6) references client_master46(Client_no),
+	Dely_address Varchar2(25),
+	Salesman_no Varchar2(6) references salesman_master46(Salesman_no),
+	Dely_type Char(1) default ('F') check (Dely_type in('P','F')),
+	Billed_yn Char(1),
+	Dely_date Date,
+	Order_status Varchar2(10) check (Order_status in ('In Process','Fulfilled','Backorder','Cancelled')),
+	check(Order_no like 'O%'),
+	check (Dely_date > Order_date)
+);
+
+create table sales_order_details46(
+	Order_no Varchar2(6),
+	Product_no Varchar2(6),
+	Qty_ordered Number(8),
+	Qty_Disp Number(8),
+	Product_rate Number(10,2),
+	primary key(Order_no,Product_no),
+	Foreign key(Order_no) references sales_order46(Order_no),
+        Foreign key(Product_no) references product_master46(Product_no)
+);
+
+insert into client_master46 values('C00001','Ivan Bayross', 'Mumbai', 400054,'Maharashtra',15000);
+insert into client_master46 values('C00002','Mamta Mazumdar','Madras',780001, 'Tamil Nadu', 0);
+insert into client_master46 values('C00003','Chhaya Bankar', 'Mumbai', 400057,'Maharashtra',5000);
+insert into client_master46 values('C00004','Ashwini Joshi', 'Bangalore', 560001,'Karnataka',0);
+insert into client_master46 values('C00005','Hansel Colaco', 'Mumbai', 400060,' Maharashtra',2000);
+insert into client_master46 values('C00006','Deepak Sharma', 'Mangalore', 560050,'Karnataka',0);
+
+
+
+insert into product_master46 values('P00001','T-Shirts',5,'Piece',200,50,350,250);
+insert into product_master46 values('P03453','Shirts', 6,'Piece',150,50, 500 ,350);
+insert into product_master46 values('P06734','Cotton Jeans', 5,'Piece',100, 20 ,600 ,450);
+insert into product_master46 values('P07865','Jeans' ,5 ,'Piece', 100, 20, 750, 500);
+insert into product_master46 values('P07868','Trousers',2,'Piece',150,50,850,550);
+insert into product_master46 values('P07885','PuM-Overs', 2.5 ,'Piece', 80,30,700,450);
+insert into product_master46 values('P07965','Denim Shirts', 4 ,'Piece',100,40,350, 250);
+insert into product_master46 values('P07975','Lyers Tops', 5,'Piece', 70 ,30, 300, 175);
+insert into product_master46 values('P08865','Skirts', 5,'Piece',75 ,30 ,450 ,300);
+
+
+insert into salesman_master46 values('S00001','Aman','A/14', 'Worli','Mumbai', 400002,'Maharashtra' , 3000, 100, 50 ,'Good');
+insert into salesman_master46 values('S00002', 'Omkar', '65','Nariman','Mumbai',400001,'Maharashtra', 3000 ,200 ,100 ,'Good');
+insert into salesman_master46 values('S00003' ,'Raj' ,'P-7','Bandra', 'Mumbai' ,400032 ,'Maharashtra',3000, 200, 100, 'Good');
+insert into salesman_master46 values('S00004','Ashish','A/5','Juhu' ,'Mumbai',400044,'Maharashtra',3500 ,200, 150 ,'Good');
+
+insert into sales_order46 values('O19001','20-July-02','C00001','ABC HOUSE','S00001','F','N' ,'12-June-04', 'In Process');
+insert into sales_order46 values('O19002','27-June-02','C00002','ABC HOUSE','S00002','P','N' ,'25-June-04', 'Cancelled');
+insert into sales_order46 values('O46865','20-Feb-02','C00002','ABC HOUSE','S00003','F','Y' ,'18-Feb-04', 'Fulfilled');
+insert into sales_order46 values('O19003','07-Apr-02','C00001','ABC HOUSE','S00001','F','Y' ,'03-Apr-04', 'Fulfilled');
+insert into sales_order46 values('O46866','22-May-02','C00004','ABC HOUSE','S00002','P','N' ,'20-May-04', 'Cancelled');
+insert into sales_order46 values('O19008','26-July-02','C00005','ABC HOUSE','S00004','F','N' ,'24-May-04', 'In Process');
+
+
+
+insert into sales_order_details46 values('O19001','P00001',4,4,350);
+
+insert into sales_order_details46 values('O19001' ,'P07885' ,2, 1, 700);
+
+insert into sales_order_details46 values('O19002' ,'P00001' ,10,0, 350);
+
+insert into sales_order_details46 values('O46865' ,'P07868' ,3, 3, 850);
+
+insert into sales_order_details46 values('O46865' ,'P07885' ,3, 1 ,700);
+
+insert into sales_order_details46 values('O46865' ,'P00001' ,10 ,10, 350);
+
+insert into sales_order_details46 values('O46865' ,'P03453' ,4 ,4 ,500);
+
+insert into sales_order_details46 values('O19003' ,'P03453' ,2 ,2, 500);
+
+insert into sales_order_details46 values('O19003' ,'P06734' ,1, 1, 600);
+
+insert into sales_order_details46 values('O46866' ,'P07965' ,1, 0 ,350);
+
+insert into sales_order_details46 values('O46866' ,'P07975' ,1 ,0 ,300);
+
+insert into sales_order_details46 values('O19008' ,'P00001' ,10, 5, 350);
+
+insert into sales_order_details46 values('O19008' ,'P07975' ,5,3, 300);
+
+
+
+select Name from client_master46 where Name  like '_a%';
+select Name from client_master46 where City like '_a%';
+SELECT * FROM client_master46 WHERE City IN ('Bombay', 'Delhi');
+select * from client_master46 where bal_due > 10000;
+SELECT * 
+FROM sales_order46 
+WHERE month(Order_date) = 1;
