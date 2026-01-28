@@ -1,0 +1,292 @@
+create table EMP_45(	
+EMPNO number(4), 
+ENAME varchar(50),
+JOB char(25),
+MGR number(4),
+HIREDATE date,
+SAL number(4),
+COMM number(4),
+DEPTNO number(2)
+PRIMARY KEY(EMPNO));
+
+create table client_master46(
+	Client_no Varchar2(6) PRIMARY KEY,
+	Name Varchar2(20) NOT NULL,
+	City Varchar2(15) ,
+	Pincode Number(8),
+	State Varchar2(15),
+	Bal_due Number(10,2),
+	check(Client_no like 'C%')
+);
+
+create table product_master46(
+	Product_no Varchar2(6) PRIMARY KEY,
+	Description Varchar2(15) NOT NULL,
+	Profit_percent Number(4,2) NOT NULL,
+	Unit_measure Varchar2(10) NOT NULL,
+	Qty_on_hand Number(8) NOT NULL,
+	Reorder_lvl Number(8) NOT NULL,
+	Sell_price Number(8,2) NOT NULL check(Sell_price > 0),
+	Cost_price Number(8,2) NOT NULL check(Cost_price > 0),
+	check(Product_no like 'P%')
+);
+
+create table salesman_master46(
+	Salesman_no Varchar2(6) PRIMARY KEY,
+	Salesman_name Varchar2(20) NOT NULL,
+	Address1 Varchar2(10) NOT NULL,
+	Address2 Varchar2(10),
+	City Varchar2(20) ,
+	Pincode Number(7),
+	State Varchar2(20),
+	Sal_amt Number(8,2) NOT NULL check(Sal_amt > 0),
+	Tgt_to_get Number(6,2) NOT NULL check(Tgt_to_get > 0),
+	Ytd_sales Number(6,2) NOT NULL,
+	Remarks Varchar2(20),
+	check(Salesman_no like 'S%')
+);
+
+create table sales_order46(
+	Order_no Varchar2(6) Primary key,
+	Order_date date,
+	Client_no Varchar2(6) references client_master46(Client_no),
+	Dely_address Varchar2(25),
+	Salesman_no Varchar2(6) references salesman_master46(Salesman_no),
+	Dely_type Char(1) default ('F') check (Dely_type in('P','F')),
+	Billed_yn Char(1),
+	Dely_date Date,
+	Order_status Varchar2(10) check (Order_status in ('In Process','Fulfilled','Backorder','Cancelled')),
+	check(Order_no like 'O%'),
+	check (Dely_date > Order_date)
+);
+
+create table sales_order_details46(
+	Order_no Varchar2(6),
+	Product_no Varchar2(6),
+	Qty_ordered Number(8),
+	Qty_Disp Number(8),
+	Product_rate Number(10,2),
+	primary key(Order_no,Product_no),
+	Foreign key(Order_no) references sales_order46(Order_no),
+        Foreign key(Product_no) references product_master46(Product_no)
+);
+
+insert into client_master46 values('C00001','Ivan Bayross', 'Mumbai', 400054,'Maharashtra',15000);
+insert into client_master46 values('C00002','Mamta Mazumdar','Madras',780001, 'Tamil Nadu', 0);
+insert into client_master46 values('C00003','Chhaya Bankar', 'Mumbai', 400057,'Maharashtra',5000);
+insert into client_master46 values('C00004','Ashwini Joshi', 'Bangalore', 560001,'Karnataka',0);
+insert into client_master46 values('C00005','Hansel Colaco', 'Mumbai', 400060,' Maharashtra',2000);
+insert into client_master46 values('C00006','Deepak Sharma', 'Mangalore', 560050,'Karnataka',0);
+
+
+
+insert into product_master46 values('P00001','T-Shirts',5,'Piece',200,50,350,250);
+insert into product_master46 values('P03453','Shirts', 6,'Piece',150,50, 500 ,350);
+insert into product_master46 values('P06734','Cotton Jeans', 5,'Piece',100, 20 ,600 ,450);
+insert into product_master46 values('P07865','Jeans' ,5 ,'Piece', 100, 20, 750, 500);
+insert into product_master46 values('P07868','Trousers',2,'Piece',150,50,850,550);
+insert into product_master46 values('P07885','PuM-Overs', 2.5 ,'Piece', 80,30,700,450);
+insert into product_master46 values('P07965','Denim Shirts', 4 ,'Piece',100,40,350, 250);
+insert into product_master46 values('P07975','Lyers Tops', 5,'Piece', 70 ,30, 300, 175);
+insert into product_master46 values('P08865','Skirts', 5,'Piece',75 ,30 ,450 ,300);
+
+
+insert into salesman_master46 values('S00001','Aman','A/14', 'Worli','Mumbai', 400002,'Maharashtra' , 3000, 100, 50 ,'Good');
+insert into salesman_master46 values('S00002', 'Omkar', '65','Nariman','Mumbai',400001,'Maharashtra', 3000 ,200 ,100 ,'Good');
+insert into salesman_master46 values('S00003' ,'Raj' ,'P-7','Bandra', 'Mumbai' ,400032 ,'Maharashtra',3000, 200, 100, 'Good');
+insert into salesman_master46 values('S00004','Ashish','A/5','Juhu' ,'Mumbai',400044,'Maharashtra',3500 ,200, 150 ,'Good');
+
+insert into sales_order46 values('O19001','20-July-02','C00001','ABC HOUSE','S00001','F','N' ,'12-June-04', 'In Process');
+insert into sales_order46 values('O19002','27-June-02','C00002','ABC HOUSE','S00002','P','N' ,'25-June-04', 'Cancelled');
+insert into sales_order46 values('O46865','20-Feb-02','C00002','ABC HOUSE','S00003','F','Y' ,'18-Feb-04', 'Fulfilled');
+insert into sales_order46 values('O19003','07-Apr-02','C00001','ABC HOUSE','S00001','F','Y' ,'03-Apr-04', 'Fulfilled');
+insert into sales_order46 values('O46866','22-May-02','C00004','ABC HOUSE','S00002','P','N' ,'20-May-04', 'Cancelled');
+insert into sales_order46 values('O19008','26-July-02','C00005','ABC HOUSE','S00004','F','N' ,'24-May-04', 'In Process');
+
+
+
+insert into sales_order_details46 values('O19001','P00001',4,4,350);
+
+insert into sales_order_details46 values('O19001' ,'P07885' ,2, 1, 700);
+
+insert into sales_order_details46 values('O19002' ,'P00001' ,10,0, 350);
+
+insert into sales_order_details46 values('O46865' ,'P07868' ,3, 3, 850);
+
+insert into sales_order_details46 values('O46865' ,'P07885' ,3, 1 ,700);
+
+insert into sales_order_details46 values('O46865' ,'P00001' ,10 ,10, 350);
+
+insert into sales_order_details46 values('O46865' ,'P03453' ,4 ,4 ,500);
+
+insert into sales_order_details46 values('O19003' ,'P03453' ,2 ,2, 500);
+
+insert into sales_order_details46 values('O19003' ,'P06734' ,1, 1, 600);
+
+insert into sales_order_details46 values('O46866' ,'P07965' ,1, 0 ,350);
+
+insert into sales_order_details46 values('O46866' ,'P07975' ,1 ,0 ,300);
+
+insert into sales_order_details46 values('O19008' ,'P00001' ,10, 5, 350);
+
+insert into sales_order_details46 values('O19008' ,'P07975' ,5,3, 300);
+
+
+a)	Find the names of all clients having ‘a’ as the second letter in their names.
+select Name from client_master46 where Name  like '_a%';
+
+
+NAME
+--------------------
+Mamta Mazumdar
+Hansel Colaco
+
+
+b)	Find out the clients who stay in a city whose second letter is 'a'.
+select Name from client_master46 where City like '_a%';
+
+NAME
+--------------------
+Mamta Mazumdar
+Ashwini Joshi
+Deepak Sharma
+
+
+c)	Find the list of all clients who stay in 'Bombay' or 'Delhi'.
+SELECT * FROM client_master46 WHERE City IN ('Bombay', 'Delhi');
+
+no rows selected
+
+d)	Print the list of clients whose bal_due is greater than value 10000.
+select * from client_master46 where bal_due > 10000;
+
+CLIENT NAME                 CITY               PINCODE STATE              BAL_DUE
+------ -------------------- --------------- ---------- --------------- ----------
+C00001 Ivan Bayross         Mumbai              400054 Maharashtra          15000
+
+
+e)	Print the information from sales_order table for orders placed in the month of January.
+
+SELECT * 
+FROM sales_order46 
+WHERE EXTRACT(Month from Order_date) = 2;
+
+ORDER_ ORDER_DAT CLIENT DELY_ADDRESS              SALESM D B DELY_DATE ORDER_STAT
+------ --------- ------ ------------------------- ------ - - --------- ----------
+O46865 20-FEB-02 C00002 ABC HOUSE                 S00003 F Y 18-FEB-04 Fulfilled
+
+
+f)	Display the order information for client_no 'C00001' and 'C00002'.
+select * from sales_order46 where 
+Client_no='C00001' or Client_no='C00002';
+
+ORDER_ ORDER_DAT CLIENT DELY_ADDRESS              SALESM D B DELY_DATE ORDER_STAT
+------ --------- ------ ------------------------- ------ - - --------- ----------
+O19001 20-JUL-02 C00001 ABC HOUSE                 S00001 F N 12-JUN-04 In Process
+O19002 27-JUN-02 C00002 ABC HOUSE                 S00002 P N 25-JUN-04 Cancelled
+O46865 20-FEB-02 C00002 ABC HOUSE                 S00003 F Y 18-FEB-04 Fulfilled
+O19003 07-APR-02 C00001 ABC HOUSE                 S00001 F Y 03-APR-04 Fulfilled
+
+
+g)	Find products whose selling price is greater than 2000 and less than or equal to 5000. 
+
+select * from product_master46 where 
+Sell_price > 200 and Sell_price<=500;
+
+
+PRODUC DESCRIPTION     PROFIT_PERCENT UNIT_MEASU QTY_ON_HAND REORDER_LVL SELL_PRICE COST_PRICE
+------ --------------- -------------- ---------- ----------- ----------- ---------- ----------
+P00001 T-Shirts                     5 Piece              200          50        350        250
+P03453 Shirts                       6 Piece              150          50        500        350
+P07965 Denim Shirts                 4 Piece              100          40        350        250
+P07975 Lyers Tops                   5 Piece               70          30        300        175
+P08865 Skirts                       5 Piece               75          30        450        300
+
+
+h)	Find products whose selling price is more than 1500. Calculate a new selling price as original selling price * .15. Rename the new column in the above query as new_price.
+
+
+select Product_no,Description,Sell_price ,Sell_price * 0.15 as new_price from product_master46 where Sell_price>150;
+
+PRODUC DESCRIPTION     SELL_PRICE  NEW_PRICE
+------ --------------- ---------- ----------
+P00001 T-Shirts               350       52.5
+P03453 Shirts                 500         75
+P06734 Cotton Jeans           600         90
+P07865 Jeans                  750      112.5
+P07868 Trousers               850      127.5
+P07885 PuM-Overs              700        105
+P07965 Denim Shirts           350       52.5
+P07975 Lyers Tops             300         45
+P08865 Skirts                 450       67.5
+
+9 rows selected.
+
+i)	List the names, city and state of clients who are not in the state of 'Maharashtra'.
+
+select  Name,City,State from client_master46 where State<>'Maharashtra';
+
+NAME                 CITY            STATE
+-------------------- --------------- ---------------
+Mamta Mazumdar       Madras          Tamil Nadu
+Ashwini Joshi        Bangalore       Karnataka
+Hansel Colaco        Mumbai           Maharashtra
+Deepak Sharma        Mangalore       Karnataka
+
+j)	Count the total number of orders. 
+
+select SUM(Qty_ordered) from sales_order_details46;
+
+	SUM(QTY_ORDERED)
+	----------------
+              56
+
+
+k)	Calculate the average price of all the products
+
+select avg(Sell_price),avg(Cost_price) from product_master46;
+
+AVG(SELL_PRICE) AVG(COST_PRICE)
+--------------- ---------------
+     538.888889      363.888889
+
+l)	Determine the maximum and minimum product prices. Rename the output as max_price and min_price respectively. 
+
+select max(Product_rate) as max_price,min(Product_rate) as min_price from sales_order_details46;
+
+o/p:-
+		MAX_PRICE  MIN_PRICE
+		---------- ----------
+     		  850        300
+
+m)	Count the number of products having price greater than or equal to 1500. 
+
+select count(Product_no) from sales_order_details46 where product_rate>=150;
+
+o/p:-  
+
+	COUNT(PRODUCT_NO)
+	-----------------
+               13
+
+n)	Find all the products whose qty_on_hand is less than reorder level.
+
+select * from product_master46 where (Qty_on_hand < Reorder_lvl);
+o/p:--
+	no rows selected
+
+o)	Display the order number and day on which clients placed their order.
+
+o/p:--
+	SQL> select Order_no,To_Char(Order_date,'DAY')as ORDER_DAY from sales_order46;
+
+ORDER_ ORDER_DAY
+------ ---------
+O19001 SATURDAY
+O19002 THURSDAY
+O46865 WEDNESDAY
+O19003 SUNDAY
+O46866 WEDNESDAY
+O19008 FRIDAY
+
+6 rows selected.
