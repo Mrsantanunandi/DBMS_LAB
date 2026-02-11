@@ -1,0 +1,207 @@
+ASSIGNMENT-3
+------------------------------------------------------------------------------------------------
+a)	List the names of employees whose names have " i "  as the second character .
+select ENAME from EMPP_46 where ENAME  like '_i%';
+
+
+ENAME
+---------------
+King
+
+b)	List names of employees who are not managers.		
+
+select * from EMPP_46 where JOB LIKE 'Manager%';
+
+
+     EMPNO ENAME           JOB                         MGR HIREDATE         SAL       COMM     DEPTNO
+---------- --------------- -------------------- ---------- --------- ---------- ---------- ----------
+      7566 Jones           Manager                    7839 02-APR-81       2975                    20
+      7698 Blake           Manager                    7839 01-MAR-81       2850                    30
+      7782 Clark           Manager                    7839 09-JUN-81       2450                    10
+
+
+c)	Display the highest, lowest, sum and average salary of all employees. Label the columns as "Maximum" "Minimum" "Total" and "Average"
+
+select max(SAL) as Maximum,min(SAL) as Minimum,SUM(SAL) as Total, AVG(SAL) as Average from EMPP_46;
+
+
+   MAXIMUM    MINIMUM      TOTAL    AVERAGE
+---------- ---------- ---------- ----------
+      5000        800      22675     2267.5
+
+d)	Modify the above query to display the highest, lowest, sum and average salary for each job type.
+	
+select max(SAL) as Maximum,min(SAL) as Minimum,SUM(SAL) as Total, AVG(SAL) as Average from EMPP_46 group by JOB;
+
+   MAXIMUM    MINIMUM      TOTAL    AVERAGE
+---------- ---------- ---------- ----------
+      5000       5000       5000       5000
+       800        800        800        800
+      3000       3000       3000       3000
+      1600       1250       5600       1400
+      2975       2450       8275 2758.33333
+
+
+e)	Determine the number of managers. Label the column "Number of managers"
+	
+	select COUNT(*) as "Number of managers" from EMPP_46 where JOB like 'Manager%';
+
+Number of managers
+------------------
+                 3
+
+
+f)	Find the employees who were hired after '01-jan-1980'
+
+	select * from EMPP_46 where HIREDATE > '01-jan-1980';
+
+     EMPNO ENAME           JOB                         MGR HIREDATE         SAL       COMM     DEPTNO
+---------- --------------- -------------------- ---------- --------- ---------- ---------- ----------
+      7369 Smith           Clerk                      7902 17-DEC-80        800                    20
+      7499 Allen           Salesman                   7698 20-FEB-81       1600        300         30
+      7521 Ward            Salesman                   7698 22-FEB-81       1250        500         30
+      7566 Jones           Manager                    7839 02-APR-81       2975                    20
+      7654 Martin          Salesman                   7698 28-SEP-81       1250       1400         30
+      7698 Blake           Manager                    7839 01-MAR-81       2850                    30
+      7782 Clark           Manager                    7839 09-JUN-81       2450                    10
+      7788 Scott           Analyst                    7566 09-DEC-82       3000                    20
+      7839 King            President                       17-NOV-81       5000                    10
+      7844 Turner          Salesman                   7698 09-SEP-81       1500        500         30
+
+
+g)	Display the name of employee who earns maximum salary whose job is salesman
+
+SELECT ENAME,SAL FROM EMPP_46 WHERE JOB LIKE 'Salesman%' AND SAL = (SELECT MAX(SAL)
+    FROM EMPP_46
+    WHERE JOB LIKE 'Salesman%'
+);
+
+
+ENAME                  SAL
+--------------- ----------
+Allen                 1600
+
+h)	Display the name of employee who earns minimum salary and whose job is clerk.
+
+SELECT ENAME FROM EMPP_46 WHERE JOB LIKE 'Clerk%' AND SAL = (
+    SELECT MIN(SAL)
+    FROM EMPP_46
+    WHERE JOB LIKE 'Clerk%'
+);
+
+
+ENAME
+---------------
+Smith
+
+
+i)	Display the name of the department in which 'FORD' works.
+
+	SELECT D.DNAME, E.ENAME FROM DEPTT_46 D,EMPP_46 E WHERE E.ENAME='Scott' AND D.DEPTNO = ( SELECT DEPTNO FROM EMPP_46 WHERE ENAME='Scott');
+
+	DNAME                ENAME
+	-------------------- ---------------
+	Research             Scott
+
+j)	Display the name of the department whose salary is maximum.
+
+SQL>    SELECT D.DNAME FROM DEPTT_46 D,EMPP_46 E WHERE E.DEPTNO=D.DEPTNO AND E.sal = ( SELECT MAX(SAL) FROM EMPP_46);
+
+DNAME
+--------------------
+Accounting
+
+k)	List the name of the employee whose salary is more than 'TURNER'.
+
+	SELECT * FROM EMPP_46 WHERE SAL > (SELECT MAX(SAL) FROM EMPP_46 WHERE ENAME='Turner');
+
+     EMPNO ENAME           JOB                         MGR HIREDATE         SAL       COMM     DEPTNO
+---------- --------------- -------------------- ---------- --------- ---------- ---------- ----------
+      7499 Allen           Salesman                   7698 20-FEB-81       1600        300         30
+      7566 Jones           Manager                    7839 02-APR-81       2975                    20
+      7698 Blake           Manager                    7839 01-MAR-81       2850                    30
+      7782 Clark           Manager                    7839 09-JUN-81       2450                    10
+      7788 Scott           Analyst                    7566 09-DEC-82       3000                    20
+      7839 King            President                       17-NOV-81       5000                    10
+
+
+Problem Statements
+
+1.	Perform the following queries using DUAL. 
+
+a)	Display the current DATE and TIME.
+
+	 select SYSDATE from dual;
+
+
+SYSDATE
+---------
+11-FEB-26
+	 select SYSTIMESTAMP from dual;
+
+SYSTIMESTAMP
+---------------------------------------------------------------------------
+11-FEB-26 12.14.17.839000 PM +05:30
+
+
+b)	Multiply 2 by 2 .
+	SQL> select 2*2 from dual;
+
+       2*2
+----------
+         4
+c)	Find the absolute value of -15
+
+	SQL> select abs(-15) from DUAL;
+
+  ABS(-15)
+----------
+        15
+d)	Calculate the square root of 5.
+
+SQL> select sqrt(5) from dual;
+
+   SQRT(5)
+----------
+2.23606798
+e)	Round off 15.19 to one decimal point:
+SQL> select round(15.19) from dual;
+
+ROUND(15.19)
+------------
+          15
+
+f)	Display the name " IVAN BAYROSS" in LOWERCASE.
+SQL> select lower('IVAN BAYROSS') from dual;
+
+LOWER('IVANB
+------------
+ivan bayross
+
+g)	Display the name " IVAN BAYROSS" in UPPERCASE.
+
+
+SQL> select upper('IVAN BAYROSS') from dual;
+
+UPPER('IVANB
+------------
+IVAN BAYROSS
+h)	Add 5 months to the present date and print the output.
+
+	select add_months(sysdate,5) from dual;
+ADD_MONTH
+---------
+11-JUL-26
+
+i)	Display the number of months between ‘02-JAN-01' and '02-JUL-01'
+	select MONTHS_BETWEEN('02-JUL-01','02-JAN-01') from dual;
+
+MONTHS_BETWEEN('02-JUL-01','02-JAN-01')
+---------------------------------------
+                                      6
+j)	Print the system date in the particular format ‘DD/MM/YYYY'
+	
+	select TO_CHAR(sysdate,'DD/MM/YYYY') from dual;
+TO_CHAR(SY
+----------
+11/02/2026
