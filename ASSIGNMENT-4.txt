@@ -1,0 +1,245 @@
+ASSIGNMENT-4
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+Create table SAILORS_46S(
+	 s_id Number(6) PRIMARY KEY,
+	 s_name  Varchar2(20) NOT NULL,
+	 rating Number(5) check (rating in (1,2,3,4,5)),
+	 age Number(2)
+);
+
+
+create table BOATS_46S(
+	 b_id Number(6) PRIMARY KEY,
+	 b_name  Varchar2(20) NOT NULL,
+	 color Varchar2(10) NOT NULL
+);
+
+
+create table RESERVES_46S(
+	s_id Number(6),
+	b_id Number(6),
+	day Varchar2(10) NOT NULL,
+	primary key(s_id,b_id),
+	Foreign key(s_id) references SAILORS_46S(s_id),
+	Foreign key(b_id) references BOATS_46S(b_id)
+);
+
+insert into SAILORS_46S values(000001,'Tarun',3,45);
+
+insert into SAILORS_46S values(000002,'Ajoy',4,62);
+
+insert into SAILORS_46S values(000003,'Aayush',5,70);
+
+insert into SAILORS_46S values(000004,'Santanu',5,25);
+
+insert into SAILORS_46S values(000005,'Spandan',4,28);
+
+insert into SAILORS_46S values(000006,'Nandi',2,55);
+
+
+insert into BOATS_46S values(100000,'B1','red');
+
+insert into BOATS_46S values(110000,'B2','red');
+
+insert into BOATS_46S values(120000,'B3','green');
+
+insert into BOATS_46S values(130000,'B4','black');
+
+insert into BOATS_46S values(140000,'B5','pink');
+
+
+insert into RESERVES_46S values(000001,110000,'Monday');
+
+insert into RESERVES_46S values(000004,120000,'Monday');
+
+insert into RESERVES_46S values(000003,130000,'Sunday');
+
+insert into RESERVES_46S values(000003,130000,'Tuesday');
+
+insert into RESERVES_46S values(000005,140000,'Sunday');
+
+insert into RESERVES_46S values(000002,120000,'Friday');
+
+
+
+a) Find the color of boats reserved by ‘Tarun’. 
+
+	select B.color from BOATS_46S B,RESERVES_46S R,SAILORS_46S S where S.s_id=R.s_id and B.b_id=R.b_id and S.s_name='Tarun';
+
+SQL>    select B.color from BOATS_46S B,RESERVES_46S R,SAILORS_46S S where S.s_id=R.s_id and B.b_id=R.b_id and S.s_name='Tarun';
+
+COLOR
+----------
+red
+
+b) Find the sailor_ids and sailor_names who have reserved boats on ‘Monday’. 
+	
+	select S.s_id,S.s_name from SAILORS_46S S ,RESERVES_46S R ,BOATS_46S B where S.s_id=R.s_id and B.b_id=R.b_id and R.day='Monday';
+	SQL>    select S.s_id,S.s_name,R.day from SAILORS_46S S ,RESERVES_46S R ,BOATS_46S B where S.s_id=R.s_id and B.b_id=R.b_id and R.day='Monday';
+
+ 
+      S_ID S_NAME               DAY
+---------- -------------------- ----------
+         1 Tarun                Monday
+         4 Santanu              Monday 
+
+c) List boat_id’s and boat names for ‘red’ and ‘green’ colors only. 
+	
+	select * from BOATS_46S where color='red' or color='green';
+
+
+SQL>    select * from BOATS_46S where color='red' or color='green';
+
+      B_ID B_NAME               COLOR
+---------- -------------------- ----------
+    100000 B1                   red
+    110000 B2                   red
+    120000 B3                   green
+
+	
+d) Delete all the sailors’ information whose age is greater than 60.
+
+SQL> delete from RESERVES_46S where s_id in (select s_id from SAILORS_46S where age>60);
+
+2 rows deleted.
+
+SQL> delete from SAILORS_46S where age>60;
+
+2 rows deleted.
+
+SQL> select * from SAILORS_46S;
+
+      S_ID S_NAME                   RATING        AGE
+---------- -------------------- ---------- ----------
+         1 Tarun                         3         45
+         4 Santanu                       5         25
+         5 Spandan                       4         28
+         6 Nandi                         2         55
+
+
+Q2.)------------------->>
+	
+
+Create table Teacher_46S(
+	Tid Number(4) Primary key,
+        Name Varchar2(15) NOT NULL,
+	 Dept Varchar2(15) NOT NULL
+);
+
+
+Create table Subject_46S(
+	
+	Subno Number(4) Primary Key ,
+	 Subtitle Varchar2(15) NOT NULL
+);
+
+Create table TaughtBy_46S(
+	Tid Number(4),
+	Subno Number(4),
+	primary key(Tid,Subno),
+	Foreign key(Tid) references Teacher_46S(Tid),
+	Foreign key(Subno) references Subject_46S(Subno)
+);
+
+Create table Student_46S(
+	Rollno Number(3) Primary key,
+	Sname Varchar2(15) NOT NULL,
+	City Varchar2(15) NOT NULL
+); 
+
+
+insert into Teacher_46S values(0001,'Kaushik','Math');
+insert into Teacher_46S values(0002,'DC','Physics');
+insert into Teacher_46S values(0003,'SOM','Chemistry');
+insert into Teacher_46S values(0004,'KB','Physics');
+insert into Teacher_46S values(0005,'SOB','Math');
+insert into Teacher_46S values(0006,'APC','CSE');
+
+
+insert into Subject_46S values(0010,'Thermodynamics');
+insert into Subject_46S values(0020,'Thermodynamics');
+insert into Subject_46S values(0030,'Laser');
+insert into Subject_46S values(0040,'Organic');
+insert into Subject_46S values(0050,'InOrganic');
+insert into Subject_46S values(0060,'DBMS');
+
+
+insert into TaughtBy_46S values(0001,0030);
+insert into TaughtBy_46S values(0002,0010);
+insert into TaughtBy_46S values(0003,0020);
+insert into TaughtBy_46S values(0004,0010);
+insert into TaughtBy_46S values(0005,0050);
+insert into TaughtBy_46S values(0006,0060);
+
+
+
+insert into Student_46S values(101,'Imon','Kolkata');
+insert into Student_46S values(102,'Jana','Kolkata');
+insert into Student_46S values(103,'Subhajit','Hoogly');
+insert into Student_46S values(104,'Sayan','Haldia');
+insert into Student_46S values(105,'Srijit','Kolkata');
+insert into Student_46S values(22,'Sayak','HatiBagan');
+insert into Student_46S values(23,'jit','Sealdah');
+insert into Student_46S values(21,'Sayak','kolkata');
+insert into Student_46S values(24,'jit','kolkata');
+
+
+a) Get the names of all the teachers of ‘Physics’ department who teach ‘Thermodynamics’. 
+	Select T.Name from Teacher_46S T,TaughtBy_46S a ,Subject_46S S where a.Subno=S.Subno and a.Tid=T.Tid  and T.Dept='Physics' and S.Subtitle='Thermodynamics';
+
+
+SQL>    Select T.Name from Teacher_46S T,TaughtBy_46S a ,Subject_46S S where a.Subno=S.Subno and a.Tid=T.Tid  and T.Dept='Physics' and S.Subtitle='Thermodynamics';
+
+NAME
+---------------
+DC
+KB
+
+b) Rename the subject ‘DBMS’ to ‘RDBMS’.
+	
+	update Subject_46S set Subtitle='RDBMS' where Subtitle='DBMS';
+
+SQL>    update Subject_46S set Subtitle='RDBMS' where Subtitle='DBMS';
+
+1 row updated.
+
+SQL> select * from Subject_46S;
+
+     SUBNO SUBTITLE
+---------- ---------------
+        10 Thermodynamics
+        20 Thermodynamics
+        30 Laser
+        40 Organic
+        50 InOrganic
+        60 RDBMS
+
+c) Find out all the students who stay in ‘Kolkata’ and whose roll number is between 20 and 25. 
+	
+	select * from Student_46S where Rollno between 20 and 25  and City='kolkata';
+
+SQL>    select * from Student_46S where Rollno between 20 and 25  and City='kolkata';
+
+    ROLLNO SNAME           CITY
+---------- --------------- ---------------
+        21 Sayak           kolkata
+        24 jit             kolkata
+
+
+d) Display all the students’ information in descending order of their roll number who stay in 
+‘Kolkata’.
+
+select * from Student_46S where City='Kolkata' order by Rollno DESC;
+
+
+SQL> select * from Student_46S where City='Kolkata' order by Rollno DESC;
+
+    ROLLNO SNAME           CITY
+---------- --------------- ---------------
+       105 Srijit          Kolkata
+       102 Jana            Kolkata
+       101 Imon            Kolkata
+        24 jit             Kolkata
+        21 Sayak           Kolkata
+
