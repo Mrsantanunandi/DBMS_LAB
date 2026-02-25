@@ -1,0 +1,247 @@
+----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+ASSIGNMENT-5
+
+Create table ZIPCODES46S(
+	ZIP Number(6) PRIMARY KEY,
+	CITY Varchar2(15)
+);
+
+
+Create table EMPLOYEES46S(
+	ENO Number(4) Primary Key,
+	ENAME Varchar2(15) NOT NULL,
+	ZIP Number(6),
+	HDATE Date NOT NULL,
+	Foreign key(ZIP) references ZIPCODES46S(ZIP)
+);
+
+Create table PARTS46S(
+	PNO Number(4) Primary Key,
+	PNAME Varchar2(15) NOT NULL,
+	QOH Number(5) NOT NULL,
+	PRICE Number(5) NOT NULL,
+	LEV Number(3)
+);
+
+
+Create table CUSTOMERS46S (
+ 	CNO number(4) Primary Key,
+ 	CNAME Varchar2(15) NOT NULL,
+ 	STREET Varchar2(10),
+ 	ZIP Number(6) references ZIPCODES46S(ZIP),
+ 	PHONE Number(10)
+);
+
+
+CREATE TABLE ORDERS46S (
+    ONO NUMBER(4) PRIMARY KEY,
+    CNO NUMBER(4),
+    ENO NUMBER(4),
+    RECEIVED DATE,
+    SHIPPED DATE,
+    FOREIGN KEY (CNO) REFERENCES CUSTOMERS46S(CNO),
+    FOREIGN KEY (ENO) REFERENCES EMPLOYEES46S(ENO)
+);
+
+
+CREATE TABLE ODETAILS46S (
+    ONO NUMBER(4),
+    PNO NUMBER(4),
+    QTY NUMBER(5),
+    PRIMARY KEY (ONO, PNO),
+    FOREIGN KEY (ONO) REFERENCES ORDERS46S(ONO),
+    FOREIGN KEY (PNO) REFERENCES PARTS46S(PNO)
+);
+
+
+INSERT INTO ZIPCODES46S VALUES (100001, 'NewYork');
+INSERT INTO ZIPCODES46S VALUES (200002, 'Chicago');
+INSERT INTO ZIPCODES46S VALUES (300003, 'Dallas');
+INSERT INTO ZIPCODES46S VALUES (400004, 'Miami');
+INSERT INTO ZIPCODES46S VALUES (500005, 'Seattle');
+
+
+INSERT INTO EMPLOYEES46S VALUES (101, 'Smith', 100001,'15-Jan-2020');
+INSERT INTO EMPLOYEES46S VALUES (102, 'Johnson', 200002,'10-Mar-2019');
+INSERT INTO EMPLOYEES46S VALUES (103, 'Williams', 300003,'01-Jul-2021');
+INSERT INTO EMPLOYEES46S VALUES (104, 'Brown', 400004,'20-Nov-2018');
+INSERT INTO EMPLOYEES46S VALUES (105, 'Davis', 500005,'05-May-2022');
+
+
+//1-for placed
+//2-for shipped
+INSERT INTO PARTS46S VALUES (201, 'Bolt', 500, 10, 1);
+INSERT INTO PARTS46S VALUES (202, 'Nut', 800, 5, 1);
+INSERT INTO PARTS46S VALUES (203, 'Screw', 600, 8, 2);
+INSERT INTO PARTS46S VALUES (204, 'Washer', 400, 3, 2);
+INSERT INTO PARTS46S VALUES (205, 'Gear', 150, 50, 3);
+INSERT INTO PARTS46S VALUES (206, 'Key', 400, 25000, 1);
+INSERT INTO PARTS46S VALUES (207, 'Ring', 150, 23000, 3);
+
+
+
+INSERT INTO CUSTOMERS46S VALUES (301, 'Anderson', 'MapleSt', 100001, 1234567890);
+INSERT INTO CUSTOMERS46S VALUES (302, 'Thomas', 'OakSt', 200002, 2345678901);
+INSERT INTO CUSTOMERS46S VALUES (303, 'Jackson', 'PineSt', 300003, 3456789012);
+INSERT INTO CUSTOMERS46S VALUES (304, 'White', 'ElmSt', 400004, 4567890123);
+INSERT INTO CUSTOMERS46S VALUES (305, 'Harris', 'CedarSt', 500005, 5678901234);
+INSERT INTO CUSTOMERS46S VALUES (306, 'Santanu', 'ElmSt', 400004, 4567890123);
+INSERT INTO CUSTOMERS46S VALUES (307, 'Spandan', 'CedarSt', 500005, 5678901234);
+
+
+
+INSERT INTO ORDERS46S VALUES (401, 301, 101,'10-Jan-2023','15-Jan-2023');
+INSERT INTO ORDERS46S VALUES (402, 302, 102,'05-Feb-2023','10-Feb-2023');
+INSERT INTO ORDERS46S VALUES (403, 303, 103,'12-Mar-2023','18-Mar-2023');
+INSERT INTO ORDERS46S VALUES (404, 304, 104,'20-Apr-2023','25-Apr-2023');
+INSERT INTO ORDERS46S VALUES (405, 305, 105,'01-May-2023','06-May-2023');
+INSERT INTO ORDERS46S VALUES (406, 305, 104,'20-Apr-2023','');
+INSERT INTO ORDERS46S VALUES (407, 307, 105,'01-May-2023','');
+
+INSERT INTO ODETAILS46S VALUES (401, 201, 50);
+INSERT INTO ODETAILS46S VALUES (402, 202, 100);
+INSERT INTO ODETAILS46S VALUES (403, 203, 75);
+INSERT INTO ODETAILS46S VALUES (404, 204, 120);
+INSERT INTO ODETAILS46S VALUES (405, 205, 20);
+
+
+
+
+
+1. Create the above database using and execute the following queries: 
+a) Get PNO & PNAME values of parts that are priced less than 20. 
+
+	select PNO ,PNAME from PARTS46S  where PRICE<20; 
+	SQL>    select PNO ,PNAME from PARTS46S  where PRICE<20;
+
+       PNO PNAME
+---------- ---------------
+       201 Bolt
+       202 Nut
+       203 Screw
+       204 Washer
+
+b) Get PNO values for parts for which orders have been placed. 
+	
+	select PNO from PARTS46S  where LEV=1;
+	SQL>    select PNO from PARTS46S  where LEV=1;
+
+       PNO
+----------
+       201
+       202
+
+c) Get all the details of customers whose names begin with the letter “S”. 
+	
+	select CNAME from CUSTOMERS46S where CNAME like 'S%';
+	
+SQL>    select CNAME from CUSTOMERS46S where CNAME like 'S%';
+
+CNAME
+---------------
+Santanu
+Spandan
+
+d) Get the ONO & CNAME values for customers whose orders have not yet been shipped. 
+	
+	select O.ONO,C.CNAME from ORDERS46S O,CUSTOMERS46S C where O.CNO=C.CNO and O.SHIPPED IS NULL;
+	
+	
+SQL>    select O.ONO,C.CNAME from ORDERS46S O,CUSTOMERS46S C where O.CNO=C.CNO and O.SHIPPED IS NULL;
+
+       ONO CNAME
+---------- ---------------
+       406 Harris
+       407 Spandan
+
+e) Get CNAME & ENAME pairs such the customer with name CNAME has placed and ordered 
+through the employees with name ENAME. 
+
+
+	SELECT C.CNAME, E.ENAME FROM CUSTOMERS46S C,ORDERS46S O,EMPLOYEES46S E where C.CNO = O.CNO and O.ENO = E.ENO;
+
+
+SQL> SELECT C.CNAME, E.ENAME FROM CUSTOMERS46S C,ORDERS46S O,EMPLOYEES46S E where C.CNO = O.CNO and O.ENO = E.ENO;
+
+CNAME           ENAME
+--------------- ---------------
+Anderson        Smith
+Thomas          Johnson
+Jackson         Williams
+White           Brown
+Harris          Brown
+Harris          Davis
+Spandan         Davis
+
+7 rows selected.
+
+f) Get the name of employees who were hired on the earliest date. 
+
+	select * from EMPLOYEES46S order By HDATE;
+	SQL>    select * from EMPLOYEES46S order By HDATE;
+
+       ENO ENAME                  ZIP HDATE
+---------- --------------- ---------- ---------
+       104 Brown               400004 20-NOV-18
+       102 Johnson             200002 10-MAR-19
+       101 Smith               100001 15-JAN-20
+       103 Williams            300003 01-JUL-21
+       105 Davis               500005 05-MAY-22
+
+g) Retrieve the part number, part name and price of parts with price greater than 20000 in an 
+ascending order of part number. 
+
+	select PNO,PNAME,PRICE from PARTS46S where PRICE > 20000 ORDER BY PNO;
+	SQL>    select PNO,PNAME,PRICE from PARTS46S where PRICE > 20000 ORDER BY PNO;
+
+       PNO PNAME                PRICE
+---------- --------------- ----------
+       206 Key                  25000
+       207 Ring                 23000
+
+h) For each part, get PNO & PNAME values along with total sales.
+	
+	select P.PNO,P.PNAME,O.QTY*P.PRICE as Total_Sales from PARTS46S P,ODETAILS46S O where O.PNO=P.PNO; 
+
+	SQL>    select P.PNO,P.PNAME,O.QTY*P.PRICE as Total_Sales from PARTS46S P,ODETAILS46S O where O.PNO=P.PNO;
+
+       PNO PNAME           TOTAL_SALES
+---------- --------------- -----------
+       201 Bolt                    500
+       202 Nut                     500
+       203 Screw                   600
+       204 Washer                  360
+       205 Gear                   1000
+
+i)Get the total quantity of parts 10601(AS 10601 not present 207) that has been ordered.  
+	
+	select * from PARTS46S where PNO=207;
+	
+	SQL>    select * from PARTS46S where PNO=207;
+
+       PNO PNAME                  QOH      PRICE        LEV
+---------- --------------- ---------- ---------- ----------
+       207 Ring                   150      23000          3
+
+j)Get the ENO values of employees from city “Mumbai”.
+
+	select E.ENO,E.ENAME,Z.CITY from ZIPCODES46S Z,EMPLOYEES46S E where E.ZIP=Z.ZIP and  Z.CITY='Miami';
+
+SQL>    select E.ENO,E.ENAME,Z.CITY from ZIPCODES46S Z,EMPLOYEES46S E where E.ZIP=Z.ZIP and  Z.CITY='Miami';
+
+       ENO ENAME           CITY
+---------- --------------- ---------------
+       104 Brown           Miami
+
+
+
+
+
+
+
+
+
+
+
+
