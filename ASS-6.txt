@@ -1,0 +1,88 @@
+---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+ASSIGNMENT - 6
+----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+
+create table Customer46S(
+	CustomerID Number(2) Primary Key,
+	CustomerName Varchar2(20) NOT NULL,
+	ContactName Varchar2(20) NOT NULL,
+	Address Varchar2(30),
+	City Varchar2(15),
+	PostalCode Number(5),
+	Country Varchar2(10)
+	);
+
+create table Suppliers46S(
+	SupplierID Number(2) Primary Key,
+	SupplierName Varchar2(20) NOT NULL,
+	ContactName Varchar2(20) NOT NULL,
+	Address Varchar2(30),
+	City Varchar2(15),
+	PostalCode Number(5),
+	Country Varchar2(10)
+	);
+
+insert into Customer46S values(1,'Alfreds Futter','Maria Andres','Obere Str.57','Berlin',12209,'Germany');
+insert into Customer46S values(2,'Ana helados','Ana Trujillo','Avda.Construction 2222','Mexico D.F',05021,'Mexico');
+insert into Customer46S values(3,'Antonio Moreno','Antonio Moreno','Mataderos 2312','Mexico D.F',05023,'Mexico');
+
+insert into  Suppliers46S values(1,'Exotic Liquid','Charlotte Cooper','49 Gilbert St.','Berlin',12209,'Germany');
+insert into  Suppliers46S values(2,'New Orleans Gajun','Shelly Burke','P.O. Box 78934','Mexico D.F',05023,'Mexico');
+insert into  Suppliers46S values(3,'Grandma Kelly','Regina Murphy','707 Oxford Rd.','Ann Arbor',48104,'USA');
+
+
+a)
+	select DISTINCT(city) from Customer46S UNION select DISTINCT(city) from Suppliers46S;
+SQL>    select DISTINCT(city) from Customer46S UNION select DISTINCT(city) from Suppliers46S;
+
+CITY
+---------------
+Ann Arbor
+Berlin
+Mexico D.F
+
+b)
+	select city from Customer46S UNION select city from Suppliers46S;
+
+SQL>    select city from Customer46S UNION select city from Suppliers46S;
+
+CITY
+---------------
+Ann Arbor
+Berlin
+Mexico D.F
+
+c)
+	
+	select city from Customer46S where Country='Germany' UNION select city from Suppliers46S where Country='Germany';
+
+
+SQL>    select city from Customer46S where Country='Germany' UNION select city from Suppliers46S where Country='Germany';
+
+CITY
+---------------
+Berlin
+
+
+d)
+
+SQL>    select CustomerName as ALLNAME from Customer46S where city In(select city from Customer46S Intersect select city from Suppliers46S) UNION select SupplierName from Suppliers46S where city In(select city from Customer46S Intersect select city from Suppliers46S);
+
+ALLNAME
+--------------------
+Alfreds Futter
+Ana helados
+Antonio Moreno
+Exotic Liquid
+New Orleans Gajun
+
+e)
+	select country from Suppliers46S MINUS select country from Customer46S;
+
+SQL>    select country from Suppliers46S MINUS select country from Customer46S;
+
+COUNTRY
+----------
+USA
