@@ -1,0 +1,96 @@
+QUESTIONS
+a) select * from client_master_17 where name like '_a%';
+CLIENT NAME                 CITY               PINCODE STATE              BAL_DUE
+------ -------------------- --------------- ---------- --------------- ----------
+C00002 Mamta Mazumdar       Madras              780001 Tamil Nadu               0
+C00005 Hansel Colaco        Mumbai              400060 Maharashtra           2000
+
+b) select * from client_master_17 where city like '_a%';
+CLIENT NAME                 CITY               PINCODE STATE              BAL_DUE
+------ -------------------- --------------- ---------- --------------- ----------
+C00002 Mamta Mazumdar       Madras              780001 Tamil Nadu               0
+C00004 Ashwini Joshi        Bangalore           560001 Karnataka                0
+C00006 Deepak Sharma        Mangalore           560050 Karnataka                0
+
+c) select * from client_master_17 where city in ('Mumbai', 'Delhi');
+CLIENT NAME                 CITY               PINCODE STATE              BAL_DUE
+------ -------------------- --------------- ---------- --------------- ----------
+C00001 Ivan Bayross         Mumbai              400054 Maharashtra          15000
+C00003 Chhaya Bankar        Mumbai              400057 Maharashtra           5000
+C00005 Hansel Colaco        Mumbai              400060 Maharashtra           2000
+
+d) select * from client_master_17 where bal_due > 10000;
+CLIENT NAME                 CITY               PINCODE STATE              BAL_DUE
+------ -------------------- --------------- ---------- --------------- ----------
+C00001 Ivan Bayross         Mumbai              400054 Maharashtra          15000
+
+e) select * from sales_order_17 where extract(month from order_date)=1;
+no rows selected
+
+f)  select * from sales_order_17 where client_no in ('C00001', 'C00002');
+ORDER_ ORDER_DAT CLIENT DELY_ADDRESS              SALESM D B DELY_DATE ORDER_STAT
+------ --------- ------ ------------------------- ------ - - --------- ----------
+O19001 20-JUL-02 C00001 ABC HOUSE                 S00001 F N 12-JUN-04 In Process
+O19002 27-JUN-02 C00002 ABC HOUSE                 S00002 P N 25-JUN-04 Cancelled
+O19003 07-APR-02 C00001 ABC HOUSE                 S00001 F Y 03-APR-04 Fulfilled
+O46865 20-FEB-02 C00002 ABC HOUSE                 S00003 F Y 18-FEB-04 Fulfilled
+
+g)  select * from product_master_17 where sell_price between 200 and 500;
+PRODUC DESCRIPTION     PROFIT_PERCENT UNIT_MEASU QTY_ON_HAND REORDER_LVL SELL_PRICE COST_PRICE
+------ --------------- -------------- ---------- ----------- ----------- ---------- ----------
+P00001 T-Shirts                     5 Piece              200          50        350        250
+P03453 Shirts                       6 Piece              150          50        500        350
+P07965 Denim Shirts                 4 Piece              100          40        350        250
+P07975 Lyers Tops                   5 Piece               70          30        300        175
+P08865 Skirts                       5 Piece               75          30        450        300
+
+h) select  product_no, description, profit_percent, unit_measure, qty_on_hand, reorder_lvl, cost_price, sell_price, sell_price*0.15 as new_price from product_master_17 where sell_price >= 150;
+PRODUC DESCRIPTION     PROFIT_PERCENT UNIT_MEASU QTY_ON_HAND REORDER_LVL COST_PRICE SELL_PRICE  NEW_PRICE
+------ --------------- -------------- ---------- ----------- ----------- ---------- ---------- ----------
+P00001 T-Shirts                     5 Piece              200          50        250        350       52.5
+P03453 Shirts                       6 Piece              150          50        350        500         75
+P06734 Cotton Jeans                 5 Piece              100          20        450        600         90
+P07865 Jeans                        5 Piece              100          20        500        750      112.5
+P07868 Trousers                     2 Piece              150          50        550        850      127.5
+P07885 PuM-Overs                  2.5 Piece               80          30        450        700        105
+P07965 Denim Shirts                 4 Piece              100          40        250        350       52.5
+P07975 Lyers Tops                   5 Piece               70          30        175        300         45
+P08865 Skirts                       5 Piece               75          30        300        450       67.5
+
+9 rows selected.
+
+i) select * from client_master_17 where state not in 'Maharashtra';
+CLIENT NAME                 CITY               PINCODE STATE              BAL_DUE
+------ -------------------- --------------- ---------- --------------- ----------
+C00002 Mamta Mazumdar       Madras              780001 Tamil Nadu               0
+C00004 Ashwini Joshi        Bangalore           560001 Karnataka                0
+C00006 Deepak Sharma        Mangalore           560050 Karnataka                0
+
+j)  SELECT SUM(Qty_ordered) AS total_quantity FROM sales_order_details_17;
+TOTAL_QUANTITY
+--------------
+            56
+
+k) select Avg(product_rate) as Average from sales_order_details_17;
+AVERAGE
+----------
+476.923077
+
+l) select Max(product_rate) as Max_price, Min(product_rate) as Min_price from sales_order_details_17;
+ MAX_PRICE  MIN_PRICE
+---------- ----------
+       850        300
+
+m) select Count(product_no) from sales_order_details_17 where product_rate >= 150;
+COUNT(PRODUCT_NO)
+-----------------
+               13
+
+n) select * from product_master_17 where qty_on_hand < reorder_lvl;
+no rows selected
+
+o) select order_no, to_char(order_date, 'Day') as Order_Day from sales_order_17 where order_status='In Process';
+ORDER_ ORDER_DAY
+------ ---------
+O19001 Saturday
+O19008 Friday
